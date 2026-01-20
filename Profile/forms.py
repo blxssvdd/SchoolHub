@@ -14,7 +14,7 @@ class UserForm(UserCreationForm):
     password2 = forms.CharField(help_text="Підтвердіть пароль", label="Підтвердження пароля", widget=forms.PasswordInput)
 
     class Meta:
-        models = User
+        model = User
         fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
 
 
@@ -26,7 +26,7 @@ class UserFormEdit(forms.ModelForm):
    
 
     class Meta:
-        models = User
+        model = User
         fields = ["username", "first_name", "last_name", "email"]
 
 
@@ -52,13 +52,13 @@ class SubjectForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        exclude = ["user"]
+        exclude = ["user", "positions", "class_room"]
 
 
 class SignInForm(forms.Form):
     username = forms.CharField(max_length=50, min_length=3, help_text="Введіть свій логін", label="Логін")
     password = forms.CharField(
-        help_text="Введіть пароль", 
+        help_text="Введіть пароль",
         label="Пароль",
         widget=forms.PasswordInput,
     )
