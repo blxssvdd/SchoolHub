@@ -17,6 +17,9 @@ class ActionForm(forms.ModelForm):
 
 
 class BookingFormUser(forms.ModelForm):
+    start_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"}))
+    end_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"}))
+
     class Meta:
         model = Booking
         exclude = ["user", "created_at", "status", "reason"]
