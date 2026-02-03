@@ -5,6 +5,14 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_div }}
+    <div>
+        <label>Час початку бронювання</label>
+        <p>{{ book.start_time }}</p>
+    </div>
+    <div>
+        <label>Час завершення бронювання</label>
+        <p>{{ book.end_time }}</p>
+    </div>
     <button type="submit" class="btn btn-primary">Зберегти</button>
 </form>
 {% endblock content %}
