@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Booking',
     'Resource',
     'Profile',
+    'TaskManager',
     "debug_toolbar",
 ]
 
