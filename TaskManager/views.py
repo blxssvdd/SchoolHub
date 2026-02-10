@@ -14,7 +14,8 @@ from Booking.permissions import has_permission
 @require_GET
 def schedule_view(request: HttpRequest):
     messages.success(request, "Використайте фільтр")
-    return render(request, "schedule_view.html")
+    schedule_all = Schedule.objects.all()
+    return render(request, "schedule_view.html", dict(schedule_all=schedule_all))
 
 
 @has_permission("RS")
@@ -22,7 +23,14 @@ def schedule_view(request: HttpRequest):
 def schedule_view_filtered(request: HttpRequest):
     day = request.POST.get("day")
     study = request.POST.get("study")
-    schedule = Schedule.objects.filter(day=day, study=study).all()
+    if day and study:
+        schedule = Schedule.objects.filter(day=day, study=study).all()
+    elif day:
+        schedule = Schedule.objects.filter(day=day).all()
+    elif study:
+        schedule = Schedule.objects.filter(study=study).all()
+    else:
+        schedule = []
     return render(request, "schedule_view.html", dict(schedule=schedule))
 
 
@@ -52,7 +60,7 @@ def edit_schedule(request: HttpRequest, id: int):
         return redirect("schedule_view")
     
     messages.success(request, f"Оновлення {schedule}")
-    return render(request, "schedule_add.html")
+    return render(request, "schedule_add.html", dict(form=form))
 
 
 @has_permission("CS")
