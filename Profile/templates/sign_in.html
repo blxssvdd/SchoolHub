@@ -1,10 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Вхід{% endblock title %}
+{% block title %}Вхід в SchoolHub{% endblock title %}
+
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="badge text-bg-info">Вхід</button>
-</form>
+<div class="auth-page d-flex align-items-center justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+        <div class="auth-form card-glass">
+            <h2 class="auth-form__title">🔐 Вхід</h2>
+
+            <form method="post" novalidate class="auth-form__form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Помилка!</strong>
+                    {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+                </div>
+                {% endif %}
+
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <div class="form-text text-muted">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in field.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold mt-3">
+                    ✨ Увійти
+                </button>
+            </form>
+
+            <hr class="auth-form__divider mt-4">
+
+            <p class="auth-form__footer text-center text-muted mb-0">
+                Немаєте облікового запису?
+                <a href="{% url 'sign_up' %}" class="text-accent fw-bold">Зареєструйтеся тут</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock content %}

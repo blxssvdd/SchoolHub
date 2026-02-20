@@ -1,5 +1,91 @@
 {% extends "base.html" %}
 
+{% load permissions %}
+
+{% block title %}SchoolHub - Система управління розкладом та бронюванням{% endblock title %}
+
 {% block content %}
-Інформація про наступне заняття та де воно буде.
+<div class="container py-5">
+    {% if request.user.is_authenticated %}
+        <!-- Welcome Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="content-card text-center">
+                    <h1 class="gradient-text mb-3">Ласкаво просимо, {{ request.user.get_full_name }}! 👋</h1>
+                    <p class="text-secondary fs-5">Ось інформація про ваше наступне заняття</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Class Info -->
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="info-box">
+                    <h3 class="text-accent mb-3">📚 Наступне заняття</h3>
+                    {% if task and task.exists %}
+                        {% for s in task %}
+                        <div class="content-card mb-3">
+                            <h4 class="mb-2">{{ s.subject.name }} — {{ s.number }} заняття</h4>
+                            <p class="mb-1">Клас: <strong>{{ s.study }}</strong></p>
+                            <p class="mb-1">Кабінет: <strong>{{ s.resource.name }}</strong></p>
+                            {% if s.meet_url %}
+                                <p class="mb-0">Посилання: <a href="{{ s.meet_url }}" target="_blank">{{ s.meet_url }}</a></p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Наразі немає запланованних занять</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-12 col-md-4">
+                <div class="card content-card">
+                    <h5 class="text-accent mb-3">⚡ Швидкі дії</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            👤 Мій профіль
+                        </a>
+                        {% if request.user|has_permission:"CB" %}
+                        <a href="{% url 'create_book' %}" class="btn btn-success">
+                            🔖 Забронювати кабінет
+                        </a>
+                        {% endif %}
+                        {% if request.user|has_permission:"RS" %}
+                        <a href="{% url 'schedule_view' %}" class="btn btn-info">
+                            📅 Переглянути розклад
+                        </a>
+                        {% endif %}
+                        {% if request.user|has_permission:"CS" %}
+                        <a href="{% url 'add_schedule' %}" class="btn btn-warning">
+                            ➕ Додати заняття
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Not Authenticated -->
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <div class="content-card text-center py-5">
+                    <h1 class="gradient-text mb-4">📚 SchoolHub</h1>
+                    <p class="text-secondary fs-5 mb-4">
+                        Сучасна система управління розкладом та бронюванням кабінетів
+                    </p>
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'sign_in' %}" class="btn btn-success btn-lg">
+                            🔐 Увійти
+                        </a>
+                        <a href="{% url 'sign_up' %}" class="btn btn-info btn-lg">
+                            🚀 Зареєструватися
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock content %}

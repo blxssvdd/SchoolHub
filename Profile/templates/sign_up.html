@@ -1,11 +1,83 @@
 {% extends "base.html" %}
 
-{% block title %}Реєстрація{% endblock title %}
+{% block title %}Реєстрація в SchoolHub{% endblock title %}
+
 {% block content %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ sign_up_form.as_p }}
-    {{ profile_form.as_p }}
-    <button class="badge text-bg-info">Зареєструватись</button>
-</form>
+<div class="auth-page">
+    <div class="row justify-content-center w-100">
+        <div class="col-12 col-sm-10 col-md-7 col-lg-6">
+            <div class="auth-form card-glass auth-form--wide">
+                <h2 class="auth-form__title">
+                    🚀 Створити обліковий запис
+                </h2>
+
+                
+                <form method="post" enctype="multipart/form-data" novalidate class="auth-form__form">
+                    {% csrf_token %}
+
+                    {% if sign_up_form.non_field_errors or profile_form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Помилка при реєстрації!</strong>
+                        {% for error in sign_up_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        {% for error in profile_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+                    </div>
+                    {% endif %}
+
+                    <h5 class="auth-form__section-title text-accent">📋 Облікові дані</h5>
+
+                    {% for field in sign_up_form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in field.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted d-block mt-1">{{ field.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <hr class="auth-form__divider">
+
+                    <h5 class="auth-form__section-title text-accent">👤 Додаткові дані</h5>
+
+                    {% for field in profile_form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in field.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold mt-2">
+                        ✨ Зареєструватися
+                    </button>
+                </form>
+
+                <hr class="auth-form__divider">
+
+                <p class="auth-form__footer text-center text-muted mb-0">
+                    Вже маєте обліковий запис?
+                    <a href="{% url 'sign_in' %}" class="text-accent fw-bold">Увійти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

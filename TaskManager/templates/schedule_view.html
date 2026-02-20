@@ -77,7 +77,6 @@
             <td>{{ item.number }}</td>
             <td>{{ item.study }}</td>
             <td>{{ item.subject }}</td>
-            {% if request.user|has_permission:"CS" %}
             <td>
                 <p>
                     <a href="{% url 'edit_schedule' id=item.id %}" class="btn btn-warning">Оновити</a>
@@ -86,7 +85,6 @@
                     <a href="{% url 'delete_schedule' id=item.id %}" class="btn btn-danger">Видалити</a>
                 </p>
             </td>
-            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

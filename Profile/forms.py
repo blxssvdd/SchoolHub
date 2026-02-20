@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms.widgets import ClearableFileInput
 
 from .models import Profile, Action, Position, Subject
+
 
 
 class UserForm(UserCreationForm):
@@ -56,9 +58,9 @@ class ProfileForm(forms.ModelForm):
 
 
 class SignInForm(forms.Form):
-    username = forms.CharField(max_length=50, min_length=3, help_text="Введіть свій логін", label="Логін")
+    username = forms.CharField(max_length=50, min_length=3, help_text="Введіть свій логін", label="Логін", widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(
         help_text="Введіть пароль",
         label="Пароль",
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
     )

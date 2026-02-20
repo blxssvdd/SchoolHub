@@ -1,15 +1,161 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Профіль{% endblock title %}
+{% block title %}Мій профіль - SchoolHub{% endblock title %}
+
 {% block content %}
-<h1>Тут Ви можете змінити інформацію про себе.</h1>
-{% if request.user.profile.avatar %}
-<img src="{{ MEDIA_URL }}{{ request.user.profile.avatar }}" alt="Аватарка" height="150px">
-{% endif %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <button class="btn btn-primary" type="submit">Оновити</button>
-</form>
+<div class="container py-4">
+    <h1 class="mb-5">👤 Мій профіль</h1>
+
+    <div class="profile-container">
+        <!-- Avatar Section (clickable) -->
+        <div class="profile-avatar">
+            <button type="button" class="profile-avatar__trigger" id="avatarTrigger" aria-label="Змінити аватар">
+                <span class="profile-avatar__overlay">
+                    <span class="profile-avatar__overlay-icon">📷</span>
+                    <span class="profile-avatar__overlay-text">Змінити фото</span>
+                </span>
+                {% if request.user.profile.avatar %}
+                    <img src="{{ MEDIA_URL }}{{ request.user.profile.avatar }}" 
+                         alt="Аватар {{ request.user.get_full_name }}" 
+                         class="profile-avatar__img"
+                         id="currentAvatarImg">
+                {% else %}
+                    <span class="profile-avatar__placeholder" id="avatarPlaceholder">👤</span>
+                {% endif %}
+            </button>
+
+            <div class="card content-card profile-avatar-card text-center">
+                <h5 class="text-accent mb-2">{{ request.user.get_full_name }}</h5>
+                <p class="text-muted mb-0 small">{{ request.user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Edit Form Section -->
+        <div>
+            <div class="content-card">
+                <h3 class="mb-4">✏️ Редагувати профіль</h3>
+
+                <form method="post" enctype="multipart/form-data" novalidate id="profileForm">
+                    {% csrf_token %}
+
+                    {% if user_form.non_field_errors or profile_form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Помилка!</strong>
+                        {% for error in user_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        {% for error in profile_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <!-- User Form -->
+                    <h5 class="text-accent mb-3">Загальні дані</h5>
+                    {% for field in user_form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in field.errors %}<small>• {{ error }}</small><br>{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <hr class="border-dark my-4">
+
+                    <!-- Profile Form -->
+                    <h5 class="text-accent mb-3">Дані профілю</h5>
+                    {% for field in profile_form %}
+                    <div class="mb-3 {% if field.name == 'avatar' %}profile-avatar-field{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.name == 'avatar' %}
+                        <div class="avatar-form-actions mt-2 d-none" id="avatarFormCropWrap">
+                            <button type="button" class="btn avatar-form-crop-btn" id="avatarFormCropBtn">
+                                <span class="avatar-form-crop-btn-icon">✂️</span>
+                                Обрізати та масштабувати
+                            </button>
+                        </div>
+                        {% endif %}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in field.errors %}<small>• {{ error }}</small><br>{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">
+                            ✨ Зберегти зміни
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Avatar crop modal -->
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true"
+     data-update-url="{% url 'update_avatar' %}">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content avatar-modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avatarModalLabel">Змінити аватар</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body avatar-modal__body">
+                <div class="avatar-modal__pick" id="avatarModalPick">
+                    <input type="file" id="avatarFileInput" accept="image/*" class="d-none">
+                    <div class="avatar-modal__pick-icon">🖼️</div>
+                    <p class="avatar-modal__pick-title">Додайте фото профілю</p>
+                    <p class="avatar-modal__pick-hint">PNG, JPG або WEBP. Потім обріжте та масштабуйте.</p>
+                    <button type="button" class="btn btn-primary avatar-modal__pick-btn" id="avatarPickBtn">
+                        Вибрати файл
+                    </button>
+                </div>
+                <div class="avatar-modal__crop-wrap d-none" id="avatarCropWrap">
+                    <div class="avatar-modal__crop-container" id="avatarCropContainer">
+                        <img src="" alt="" id="avatarCropImg" class="avatar-modal__crop-img">
+                    </div>
+                    <div class="avatar-modal__zoom">
+                        <div class="avatar-modal__zoom-header">
+                            <span class="avatar-modal__zoom-label">Масштаб</span>
+                            <span class="avatar-modal__zoom-value" id="avatarZoomValue">100%</span>
+                        </div>
+                        <input type="range" class="form-range avatar-zoom-slider" id="avatarZoom" min="10" max="300" step="5" value="100">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer avatar-modal__footer">
+                <button type="button" class="btn btn-outline-secondary avatar-modal__btn-cancel" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-success avatar-modal__btn-apply" id="avatarApplyBtn" disabled>
+                    Застосувати
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/profile-avatar.js' %}"></script>
+
+<style>
+    @media (max-width: 768px) {
+        .profile-container {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
 {% endblock content %}

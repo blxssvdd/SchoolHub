@@ -1,0 +1,459 @@
+/* ============================================
+   SchoolHub - Advanced Effects & Microinteractions
+   ============================================ */
+
+/* Smooth Page Transitions */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Page Load Animation */
+body {
+    animation: pageLoad 0.6s ease-in-out;
+}
+
+@keyframes pageLoad {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   BUTTON ENHANCED EFFECTS
+   ============================================ */
+
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::after {
+    left: 100%;
+}
+
+/* Success Button Glow */
+.btn-success {
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: #9A9A9A;
+    transform: translateY(-2px);
+}
+
+/* Primary Button Glow */
+.btn-primary {
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #808080;
+    transform: translateY(-2px);
+}
+
+/* Danger Button Glow */
+.btn-danger {
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #E85555;
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   FORM ELEMENTS ENHANCEMENTS
+   ============================================ */
+
+/* Input Label Floating Effect */
+.form-floating > label {
+    color: #A8A8A8;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus ~ label,
+.form-control:not(:placeholder-shown) ~ label {
+    color: var(--color-accent-primary);
+    transform: translateY(-2rem) scale(0.85);
+}
+
+/* Input Bottom Border Animation */
+.form-control {
+    border-bottom: 2px solid var(--color-border);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-bottom: 2px solid var(--color-accent-primary);
+    box-shadow: 0 2px 8px rgba(139, 139, 139, 0.15);
+}
+
+/* ============================================
+   LINK HOVER EFFECTS
+   ============================================ */
+
+a:not(.btn):not(.nav-link) {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+a:not(.btn):not(.nav-link)::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-accent-primary);
+    transition: width 0.3s ease;
+}
+
+a:not(.btn):not(.nav-link):hover::after {
+    width: 100%;
+}
+
+/* ============================================
+   TABLE CELL HOVER EFFECTS
+   ============================================ */
+
+.table td {
+    transition: color 0.2s ease, background-color 0.2s ease;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(139, 139, 139, 0.08);
+}
+
+.table tbody tr:hover td {
+    color: var(--color-accent-primary);
+}
+
+.table tbody tr:hover td a {
+    color: var(--color-accent-secondary);
+}
+
+/* ============================================
+   CARD HOVER & FLIP EFFECTS
+   ============================================ */
+
+.content-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.content-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(139, 139, 139, 0.08) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.content-card:hover::before {
+    opacity: 1;
+}
+
+/* ============================================
+   NAVBAR ENHANCEMENTS
+   ============================================ */
+
+.navbar {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(139, 139, 139, 0.05);
+    transition: all 0.3s ease;
+}
+
+.navbar:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 139, 139, 0.1);
+}
+
+/* ============================================
+   BADGE PULSE EFFECT
+   ============================================ */
+
+.badge {
+    display: inline-block;
+    padding: 0.5em 0.75em;
+    min-height: 2em;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+/* ============================================
+   MESSAGE ANIMATION
+   ============================================ */
+
+.alert {
+    animation: alertSlideIn 0.4s ease-out;
+}
+
+@keyframes alertSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) rotateZ(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) rotateZ(0);
+    }
+}
+
+.alert-close {
+    animation: alertSlideOut 0.4s ease-out forwards;
+}
+
+@keyframes alertSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) rotateZ(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px) rotateZ(5deg);
+    }
+}
+
+/* ============================================
+   CHECKBOX & RADIO CUSTOM STYLES
+   ============================================ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--color-accent-primary);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    box-shadow: 0 0 10px rgba(139, 139, 139, 0.3);
+}
+
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   SELECT DROPDOWN ENHANCEMENT
+   ============================================ */
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B8B8B' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* ============================================
+   SCROLLBAR SMOOTH SCROLL
+   ============================================ */
+
+main {
+    scroll-behavior: smooth;
+}
+
+/* ============================================
+   TEXT SELECTION STYLING
+   ============================================ */
+
+::selection {
+    background-color: var(--color-accent-primary);
+    color: #000;
+}
+
+::-moz-selection {
+    background-color: var(--color-accent-primary);
+    color: #000;
+}
+
+/* ============================================
+   DISABLED STATE STYLING
+   ============================================ */
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--color-border) !important;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+
+.spinner-border {
+    border-color: var(--color-border);
+    border-right-color: var(--color-accent-primary);
+}
+
+.spinner-grow {
+    background-color: var(--color-accent-primary);
+}
+
+/* ============================================
+   PROGRESS BAR STYLING
+   ============================================ */
+
+.progress {
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary));
+    box-shadow: 0 0 10px rgba(139, 139, 139, 0.2);
+}
+
+/* ============================================
+   MODAL ENHANCEMENTS
+   ============================================ */
+
+.modal-content {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-tertiary);
+}
+
+.modal-body {
+    color: var(--color-text-secondary);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg-tertiary);
+}
+
+/* ============================================
+   DROPDOWN MENU STYLING
+   ============================================ */
+
+.dropdown-menu {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-item {
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-accent-primary);
+    border-left: 3px solid var(--color-accent-primary);
+    padding-left: calc(1rem - 3px);
+}
+
+.dropdown-divider {
+    border-color: var(--color-border);
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.toast {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.toast-body {
+    color: var(--color-text-secondary);
+}
+
+.alert .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.smooth-transition {
+    transition: all var(--transition-base) ease;
+}
+
+.no-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+
+    .navbar,
+    .btn,
+    footer {
+        display: none;
+    }
+
+    .card,
+    .content-card {
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+}

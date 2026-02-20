@@ -1,18 +1,67 @@
 {% extends "base.html" %}
 
+{% block title %}Бронювання кабінету - SchoolHub{% endblock title %}
+
 {% block content %}
-<h1>Бронювання кабінету</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_div }}
-    <div>
-        <label>Час початку бронювання</label>
-        <p>{{ book.start_time }}</p>
+<div class="container py-4">
+    <h1 class="mb-5">🔖 Забронювати кабінет</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="content-card">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Помилка при бронюванні!</strong>
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in field.errors %}
+                                <small>• {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Additional Info -->
+                    <div class="info-box">
+                        <h6 class="text-accent fw-bold mb-2">⏰ Час бронювання</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Початок</label>
+                                <p class="text-muted">{{ book.start_time|default:"Виберіть дату" }}</p>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Закінчення</label>
+                                <p class="text-muted">{{ book.end_time|default:"Виберіть дату" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold">
+                            ✨ Зберегти бронювання
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div>
-        <label>Час завершення бронювання</label>
-        <p>{{ book.end_time }}</p>
-    </div>
-    <button type="submit" class="btn btn-primary">Зберегти</button>
-</form>
+</div>
 {% endblock content %}

@@ -1,15 +1,23 @@
+import locale
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.db.models import Q
 
 from .models import Profile, Action, Position, Subject
 from .forms import UserForm, UserFormEdit, SignInForm, ActionForm, SubjectForm, ProfileForm, PositionForm
+from TaskManager.models import Schedule
+
 
 # Create your views here.
 
+
+locale.setlocale(locale.LC_TIME, 'ukrainian')
 
 def sign_up(request: HttpRequest):
     if request.method == "POST":
@@ -60,15 +68,23 @@ def sign_in(request: HttpRequest):
 def update_profile(request: HttpRequest):
     if request.method == "POST":
         user_form = UserFormEdit(data=request.POST, instance=request.user)
-        if user_form.changed_data:
-            user_form.save()
-        
         profile_form = ProfileForm(data=request.POST, files=request.FILES, instance=request.user.profile)
-        if profile_form.changed_data:
-            profile_form.save()
         
-        messages.success(request, "Дані успішно оновлено")
-        return redirect("profile")
+        if user_form.is_valid() and profile_form.is_valid():
+            if user_form.changed_data:
+                user_form.save()
+            if profile_form.changed_data:
+                profile_form.save()
+            messages.success(request, "Дані успішно оновлено")
+            return redirect("profile")
+        else:
+            # Form validation errors will be displayed in template
+            return render(
+                request,
+                "profile.html",
+                dict(user_form=user_form, profile_form=profile_form)
+            )
+    
     return render(
         request,
         "profile.html",
@@ -77,7 +93,44 @@ def update_profile(request: HttpRequest):
 
 
 @login_required
+def update_avatar(request: HttpRequest):
+    if request.method != "POST":
+        return redirect("profile")
+    avatar_file = request.FILES.get("avatar")
+    if not avatar_file or not avatar_file.content_type.startswith("image/"):
+        messages.error(request, "Виберіть зображення.")
+        return redirect("profile")
+    profile = request.user.profile
+    profile.avatar = avatar_file
+    profile.save()
+    messages.success(request, "Аватар оновлено.")
+    return redirect("profile")
+
+
+@login_required
 def index(request: HttpRequest):
+    # positions = Position.objects.filter(Q(name="Учень") | Q(name="Викладач")).all()
+    if (User.
+        objects.
+        prefetch_related("Profile").
+        prefetch_related("Position").
+        filter(username=request.user.username, profile__positions__name__in=["Учень", "Вчитель"])
+        .exists()):
+        if request.user.profile.class_room:
+            class_number = int(request.user.profile.class_room.name.split("-")[0])
+            # Use explicit Ukrainian weekday names to match DB values reliably
+            weekdays_uk = [
+                "Понеділок",
+                "Вівторок",
+                "Середа",
+                "Четвер",
+                "П'ятниця",
+                "Субота",
+                "Неділя",
+            ]
+            day = weekdays_uk[datetime.now().weekday()]
+            task = Schedule.objects.filter(day__iexact=day, study=class_number).order_by('number')
+            return render(request, "index.html", dict(task=task, day_name=day))
     return render(request, "index.html")
 
 
